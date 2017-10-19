@@ -1,3 +1,8 @@
+# Redaction en cours !
+
+__POUR CET APREM, FINIR LE COMPOSANT CALCULATOR__
+Ne pas hésiter à refaire tout ce qu'on a fait ce matin, bon week end :p
+
 # React
 
 ## Les éléments React et le JSX
