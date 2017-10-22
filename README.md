@@ -1,8 +1,3 @@
-# Redaction en cours !
-
-__POUR CET APREM, FINIR LE COMPOSANT CALCULATOR__
-Ne pas hésiter à refaire tout ce qu'on a fait ce matin, bon week end :p
-
 # React
 
 ## Les éléments React et le JSX
@@ -11,8 +6,9 @@ Ne pas hésiter à refaire tout ce qu'on a fait ce matin, bon week end :p
 const element = <h1>Hello, world!</h1>;
 ```
 
-Le JSX est un moyen commode pour le dévelopeur de __décrire__ à quoi doit ressembler l'UI et produit des "éléments" React. Ce n'est ni du HTML ni du Javascript, et il est "compilé" en javascript pur.
-On peut donc inclure des expressions JS dans le JSX :
+Le JSX est un moyen commode pour le dévelopeur de __décrire__ à quoi doit ressembler l'interface utilisateur (UI).  
+Il produit des "éléments" React. Ce n'est ni du HTML ni du Javascript, et il est "compilé" en javascript pur.
+On peut donc inclure des <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#Expressions" target="_blank">__expressions javascript__</a> dans le JSX en les placant entre des accolades :
 
 ```jsx
 <div className="profile">
@@ -20,14 +16,14 @@ On peut donc inclure des expressions JS dans le JSX :
   <span>
     {upperCaseFirstLetter(user.name)}
   </span>
-</h1>
+</div>
 ```
 
-Les éléments React sont des __objects JS__. Ils sont moins couteux à manipuler qu'un élement du DOM. React s'occupe de mettre a jour le DOM pour correspondre à la description faite par les éléments.
+Les éléments React sont des __objets JavaScript__. Ils sont moins couteux à manipuler qu'un noeud du DOM. React s'occupe de mettre a jour le DOM pour correspondre à la description faite par les éléments.
 
-L'enchainement de tous les éléments React correspond à ce qu'on appelle le "Virtual DOM". Lorsque la description change, React compare la nouvelle description à l'ancienne et opère les changements nécessaires uniquement.
+L'enchainement de tous les éléments correspond à ce qu'on appelle le "Virtual DOM". Lorsque la description change, React compare la nouvelle description à l'ancienne et opère uniquement les changements nécessaires.
 
-__Avec le JSX, on décrit à quoi doit ressembler l'interface utilisateur (UI) à tout instant.__
+__Avec le JSX, on décrit à quoi doit ressembler l'interface utilisateur (UI) à tout instant.__ React s'occupe automatiquement de faire correspondre l'interface à notre description.
 
 
 ## Les composants et les props
@@ -76,7 +72,20 @@ Les composants peuvent ensuite être __composés__ pour former une UI plus compl
 </Profile>
 ```
 
-__Les props d'un composant sont immutables__, c'est à dire qu'elles ne peuvent ni ne doivent jamais être modifiées.
+__Les props d'un composant sont immutables__, c'est à dire qu'elles ne peuvent pas être modifiées par le composant lui-même.
+
+```jsx
+...
+// THIS WILL THROW AN ERROR
+render() {
+  this.props.number = 42;
+  return (
+    <div>{ this.props.number }</div>
+  )
+}
+...
+```
+
 
 ## Le state des composants
 
@@ -118,7 +127,7 @@ L'API de React expose des méthodes qui seront appelées automatiquement au cour
 
 Ici, nous voulons créer un <a href="https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout" target="_blank">timer</a> lorsque le composant est rendu pour la première fois. (On dit lorqu'il est _"monté"_) et le supprimer lorsque le composant sera _démonté_.
 
-```jsx
+```js
 
 class Random extends React.Component {
 
@@ -140,9 +149,9 @@ class Random extends React.Component {
 
 }
 ```
-_NOTE: Ici le timer est enregistré sous l'object `this`, qui fait référence au composant lui même. React ajoute automatiquement l'objet `props` à `this`, et la clé `state` est reservée, mais en dehaors de ces deux mots clés nous sommes tout à fait libres d'ajouter à `this` autant de champs que nécessaires._
+_NOTE: Ici le timer est enregistré sous l'objet `this`, qui fait référence au composant lui même. React ajoute automatiquement l'objet `props` à `this`, et la clé `state` est reservée, mais en dehors de ces deux mots clés nous sommes tout à fait libres d'ajouter à `this` autant de champs que nécessaires._
 
-Il faut maintenant implémenter la méthod tick du composant qui sera chargée de mettre à jour le `state`.
+Il faut maintenant implémenter la méthod `tick()` du composant qui sera chargée de mettre à jour le `state`.
 
 ```js
 
@@ -201,7 +210,7 @@ this.setState({
 
 React utilise un flux de données uni-directionnel, du parent vers les enfants.
 
-Un composant parent peut injecter des données à ses enfants via les props. Il peut lui passer des données arbitaires, ré-injecter toutes (ou une partie) de ses `props`, et / ou injecter tout son state (ou une partie). Un moyen commode est d'utiliser l'opérateur desctructeur ES6 (`{...object}`).
+Un composant parent peut __injecter des données à ses enfants via les props__. Il peut lui passer des données arbitaires, ré-injecter toutes (ou une partie) de ses `props`, et / ou injecter tout son `state` (ou une partie). Un moyen commode est d'utiliser l'opérateur desctructeur ES6 (`{...object}`).
 
 ```jsx
 class Parent extends React.Component {
@@ -220,14 +229,262 @@ class Parent extends React.Component {
 }
 ```
 
-Pour remonter des données des enfants vers le parent, on utilisera générlement les evenements
+Savoir si un
+
+
+### Liste d'éléments
+
+Il est possible de rendre des collections d'éléments dans le JSX, en itérant sur un tableau avec la méthode <a href="https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Array/map" target="_blank">`map()`</a>
+
+```jsx
+const numbers = [1, 2, 3, 4, 5];
+const listItems = numbers.map((number) =>
+  <div>{number}</div>
+);
+```
+
+Pour aider React à gérer les changements dans la liste (ex : mise à jour / ajout / suppression d'un item de la liste ), il faut donner à chaque élément une __clé unique__ via une `prop` spéciale : `key`.
+
+```jsx
+const todoItems = todos.map((todo) =>
+  <li key={todo.id}>
+    {todo.text}
+  </li>
+);
+```
+
+Généralement, les données que l'on affiche dans une liste proviennent d'une base de données et disposent donc d'un identifiant unique que l'on utilisera en tant que `key`. S'il n'est pas possible d'identifier l'élément de manière unique, on peut éventuellement utiliser l'index courant de l'itération (le second paramètre de la méthode `map`). Cependant, cela ne fonctionnera pas correctement si la liste peut être ré-ordonnée.
+
+```jsx
+const todoItems = todos.map((todo, index) =>
+  <li key={index}>
+    {todo.text}
+  </li>
+);
+```
+
+React re-rendra l'intégralité de la liste si `key` n'est pas fournie ou pas unique, ce qui peut causer des problèmes de performances.
+
+*__NOTE__: La prop `key` est automatiquement supprimée par React lorsqu'il rend le composant, et n'est donc pas accessible à l'interieur de ce dernier. S'il y a besoin de récupérer l'identifiant unique, il faut passer une prop supplémentaire.*
+
+```jsx
+
+// This doesn't work as expected
+
+class TodoItem extends Component {
+  render() {
+    return (
+      <div>
+        <span>{ this.props.key }</span> // undefined
+        <span>{ this.props.text }</span>
+      </div>
+    )
+  }
+}
+
+class TodoList extends Component {
+  render() {
+    return (
+      <div>
+      {todos.map((todo, index) =>
+        <TodoItem
+          key={todo.id}
+          text={todo.text}
+        />
+      )}
+      </div>
+    )
+  }
+}
+
+// This works !
+
+class TodoItem extends Component {
+  render() {
+    return (
+      <div>
+        <span>{ this.props.id }</span>
+        <span>{ this.props.text }</span>
+      </div>
+    )
+  }
+}
+
+class TodoList extends Component {
+  render() {
+    return (
+      <div>
+      {todos.map((todo, index) =>
+        <TodoItem
+          key={todo.id}
+          id={todo.id} // passing a dedicated prop
+          text={todo.text}
+        />
+      )}
+      </div>
+    )
+  }
+}
+```
+
+*__NOTE 2__: La prop `key` n'a de sens que dans l'itération du tableau.*
+
+```jsx
+
+// This doesn't work as expected
+
+class TodoItem extends Component {
+  render() {
+    return (
+      <div key={this.props.id}> // inutile
+        <span>{ this.props.text }</span>
+      </div>
+    )
+  }
+}
+
+class TodoList extends Component {
+  render() {
+    return (
+      <div>
+      {todos.map((todo, index) =>
+        <TodoItem text={todo.text} /> // la prop key doit être déclarée ici.
+      )}
+      </div>
+    )
+  }
+}
+```
 
 ## Events
 
-## Forms
-- Convertiseur de devise
+Pour gérer des évenements sur les éléments du JSX, on connecte des fonctions à des `props` spéciales.
+```jsx
+<button onClick={() => { console.log('Clicked !') }}>Click me !</button>
+```
+*A la différence du HTML qui gère ces évènements en lowercase, on écrit les props en camelCase. (onclick =/= onClick)*
 
-### Lists
+Généralement, on passe une méthode du composant pour gérer l'évènement. React passera automatiquement un objet <a href="https://reactjs.org/docs/events.html" target="_blank">__évènement__ (SyntheticEvent)</a> en paramètre.
+```jsx
+class Button extends Component {
+
+  handleClick(event) {
+    console.log('Clicked !', event);
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>Click me !</button>
+    );
+  }
+}
+
+```
+
+En JavaScript, les méthodes d'une classe ne sont pas __liées__ automatiquement. Cela signifie que le contexte d'execution (le mo clé `this`) est perdu si la méthode est appelée de manière asynchrone. Considérant le code ci dessus :
+```jsx
+class Button extends Component {
+
+  handleClick(event) {
+    console.log(this); // undefined
+  }
+
+  ...
+}
+```
+Il faut donc lier la méthode au composant "à la main". Il y a plusieurs facon de faire cela :
+
+- Dans la méthode `render`:
+```jsx
+...
+render() {
+  return (
+    <button onClick={this.handleClick.bind(this)}>Click me !</button>
+    // OU
+    <button onClick={(event) => this.handleClick(event)}>Click me !</button>
+  );
+}
+```
+Le problème de cette façon de faire est qu'une nouvelle fonction est créée à chaque appel de `render`, ce qui peut causer des problèmes de performances en re-rendant tous les composants enfants à chaque fois. En génral, on évitera donc d'utiliser cette méthode.
+
+- Dans le `constructor`:
+```jsx
+class Button extends Component {
+
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+  ...
+}
+```
+Le problème de cette façon de faire est qu'il est possible d'oublier de lier la méthode :) De plus cela "pollue" le constructeur avec du code qui n'est pas intéressant à lire.
+
+- Avec la syntaxe ES7 qui lie automatiquement la méthode:
+```jsx
+class Button extends Component {
+
+  handleClick = (event) => {
+    console.log(this); // Button
+  }
+}
+```
+Cette syntaxe est encore expérimentale, et peut ne pas fonctionner suivant la configuration du compileur.
+
+
+## Forms
+Les formulaires sont une part essentielle des applications web. Les éléments de formulaires sont un peu différents des autres éléments du fait qu'il possèdent un état intrinsèque. C'est le navigateur qui maintient l'état interne du fomulaire, et extrait toutes les valeurs des champs à la soumission. Or jusqu'ici, nous avons vu que c'est React qui doit gérer l'état des éléments de façon à les rendre de façon optimale. Il y a donc un conflit entre le navigateur et React, qu'il appartient au développeur de trancher.
+
+Par défaut, si on ne faire rien, le code suivant rend un input html fonctionnel.
+```jsx
+class Input extends Component {
+  render() {
+    return <input type="text" />;
+  }  
+}
+```
+Cependant, le composant est rendu __une seule fois__, et quand on écrit dans le champ, c'est le navigateur qui gère l'état du `input`. React n'est pas au courant que quelque chose à changé.
+
+Pour rendre le contrôle du `input` à React, il y a un peu de travail. Le composant doit avoir un `state` qui sera mis à jour à chaque changement du `input`.
+```jsx
+class Input extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: ''; // etat initial
+    }
+  }
+
+  handleChange = (event) => {
+    this.setState({
+      value: event.target.value,
+    });
+  }
+
+  render() {
+    return (
+      <input
+        type="text"
+        value={this.state.value}
+        onChange={this.handleChange}
+        />
+    );
+  }  
+}
+```
+Maintenant, React à le contrôle sur l'état (`state`) du composant qui devient __la seule source de vérité__. Cela rend très facile la modification ou la validation des données saisies. Par exemple, pour forcer l'écriture en majuscule :
+
+```jsx
+...
+handleChange = (event) => {
+  this.setState({
+    value: event.target.value.toUpperCase(),
+  });
+}
+...
+```
+
 
 ### JSX advanced
 
